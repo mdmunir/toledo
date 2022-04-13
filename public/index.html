@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <!-- Required meta tags -->
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+        <!-- Bootstrap CSS -->
+        <link rel="stylesheet" href="/assets/bootstrap/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+        <script src="/assets/vue.js"></script>
+        <script src="/assets/socket.io.js"></script>
+        <title>Setting</title>
+    </head>
+    <body>
+        <div class="container" id="app">
+            <h2>Setting</h2>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group row">
+                        <label for="path" class="col-sm-4 col-form-label">Path</label>
+                        <div class="col-sm-8">
+                            <input type="text" class="form-control" id="path" v-model="model.path">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="baudRate" class="col-sm-4 col-form-label">Baud Rate</label>
+                        <div class="col-sm-8">
+                            <input type="number" class="form-control" id="baudRate" v-model.number="model.baudRate">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="delimiter" class="col-sm-4 col-form-label">Delimiter</label>
+                        <div class="col-sm-8">
+                            <textarea class="form-control" id="delimiter" v-model="model.delimiter" required 
+                                      rows="3"></textarea>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="begin" class="col-sm-4 col-form-label">Substring</label>
+                        <div class="col-sm-8">
+                            <div class="input-group">
+                                <input type="number" class="form-control" id="begin" v-model.number="model.begin">
+                                <input type="number" class="form-control" id="end" v-model.number="model.end">
+                            </div>                                
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-sm-8 offset-sm-4">
+                            <button type="button" class="btn btn-primary" @click="save">Save</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group row">
+                        <div class="col-sm-12">
+                            <label><input type="checkbox" v-model="synchron">
+                                Synchron &nbsp; &nbsp; 
+                            </label>                        
+                            <button type="button" class="btn btn-primary" @click="clear">Clear</button>
+                        </div>                        
+                    </div>
+                    <div class="form-group">
+                        <textarea class="form-control" id="raw" v-model="serial.raw" disabled rows="12"></textarea>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="segment">Segment</label>
+                        <textarea class="form-control" id="segment" v-model="serial.segment" disabled rows="2"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="value">Value</label>
+                        <input type="text" class="form-control" id="value" v-model="serial.value" disabled>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script src="/app.js"></script>
+    </body>
+</html>
