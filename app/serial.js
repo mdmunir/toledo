@@ -2,7 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const EventEmitter = require('events');
 
-const FILENAME = path.resolve(__dirname, '../storage/config.json');
+const FILENAME = path.resolve(process.env.APP_DIR, 'storage/config.json');
 
 const {SerialPort} = require('serialport');
 const {ByteLengthParser} = require('@serialport/parser-byte-length');
@@ -29,20 +29,22 @@ class Serial extends EventEmitter {
     open() {
         let self = this;
         if (this.port) {
-            this.port.close(function (err) {
-                console.log(err);
-            });
+            if (this.port.isOpen) {
+                this.port.close(function (err) {
+                    self.emit('error', err.toString());
+                });
+            }
             this.port = undefined;
             this.parser = undefined;
         }
 
         this.port = new SerialPort({path: this._config.path, baudRate: this._config.baudRate}, false);
         this.port.on('error', function (err) {
-            console.log(err);
+            self.emit('error', err.toString());
         });
         this.port.open(function (err) {
             if (err) {
-                console.log(err);
+                self.emit('error', err.toString());
             }
             self.parser = self.port.pipe(new ByteLengthParser({length: 8}));
             self.parser.on('data', function (data) {
@@ -85,6 +87,29 @@ class Serial extends EventEmitter {
 
     value() {
         return this._value;
+    }
+
+    attach(socket) {
+        let serial = this;
+        socket.emit('config', serial.config());
+        socket.emit('value', serial.value());
+        socket.on('config', function (value) {
+            serial.config(value);
+        });
+
+        const handlers = {};
+        const events = ['raw', 'segment', 'value', 'config', 'error'];
+        events.forEach(name => {
+            handlers[name] = function (data) {
+                socket.emit(name, data);
+            }
+
+            serial.on(name, handlers[name]);
+        });
+
+        socket.on('disconnect', () => {
+            events.forEach(name => serial.off(name, handlers[name]));
+        });
     }
 }
 

@@ -3,26 +3,23 @@ const fs = require('fs');
 const path = require('path');
 
 var express = require('express');
+const {createServer} = require("http");
+const {Server} = require("socket.io");
+
 var app = express();
-var http = require('http').createServer(app);
-var io = require('socket.io')(http, {
-    handlePreflightRequest: (req, res) => {
-        const headers = {
-            "Access-Control-Allow-Headers": "Content-Type, Authorization",
-            "Access-Control-Allow-Origin": req.headers.origin,
-            "Access-Control-Allow-Credentials": true
-        };
-        res.writeHead(200, headers);
-        res.end();
-    }
+var http = createServer(app);
+const io = new Server(http, {
+    cors: {origin: "*"},
 });
+
 const serial = require('./serial');
+serial.on('error', console.log);
 
 // endpoint
 app.use(express.static('public'));
 app.get('/', (req, res) => {
     res.sendFile('index.html', {
-        root: path.resolve(__dirname, '../public'),
+        root: path.resolve(process.env.APP_DIR, 'public'),
         headers: {
             'content-type': 'text/html'
         }
@@ -31,23 +28,7 @@ app.get('/', (req, res) => {
 
 // ************
 io.on('connection', function (socket) {
-    socket.emit('config', serial.config());
-    socket.emit('value', serial.value());
-    socket.on('config', value => serial.config(value));
-
-    const handlers = {};
-    const events = ['raw', 'segment', 'value', 'config'];
-    events.forEach(name => {
-        handlers[name] = function (data) {
-            socket.emit(name, data);
-        }
-
-        serial.on(name, handlers[name]);
-    });
-
-    socket.on('disconnect', () => {
-        events.forEach(name => serial.off(name, handlers[name]));
-    });
+    serial.attach(socket);
 });
 
 http.listen(PORT, function () {

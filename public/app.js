@@ -22,6 +22,9 @@ socket.on('value', function (data) {
 socket.on('segment', function (data) {
     STATE.serial.segment = data;
 });
+socket.on('error', function (err) {
+    console.log(err);
+});
 
 
 var app = new Vue({
