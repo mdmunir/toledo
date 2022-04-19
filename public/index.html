@@ -30,6 +30,39 @@
                         </div>
                     </div>
                     <div class="form-group row">
+                        <label for="dataBits" class="col-sm-4 col-form-label">Data Bits</label>
+                        <div class="col-sm-8">
+                            <select class="form-control" id="dataBits" v-model.number="model.dataBits">
+                                <option :value="5">5</option>
+                                <option :value="6">6</option>
+                                <option :value="7">7</option>
+                                <option :value="8">8</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="stopBits" class="col-sm-4 col-form-label">Stop Bits</label>
+                        <div class="col-sm-8">
+                            <select class="form-control" id="stopBits" v-model.number="model.stopBits">
+                                <option :value="1">1</option>
+                                <option :value="1.5">1.5</option>
+                                <option :value="2">2</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="parity" class="col-sm-4 col-form-label">Parity</label>
+                        <div class="col-sm-8">
+                            <select class="form-control" id="parity" v-model.number="model.parity">
+                                <option value="none">None</option>
+                                <option value="even">Even</option>
+                                <option value="odd">Odd</option>
+                                <option value="mark">Mark</option>
+                                <option value="space">Space</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group row">
                         <label for="delimiter" class="col-sm-4 col-form-label">Delimiter</label>
                         <div class="col-sm-8">
                             <textarea class="form-control" id="delimiter" v-model="model.delimiter" required 

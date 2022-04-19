@@ -2,6 +2,9 @@ const STATE = {
     config: {
         path: 'COM1',
         baudRate: 9600,
+        dataBits: 8,
+        stopBits: 1,
+        parity: 'none',
         delimiter: '\n',
         begin: null,
         end: null,

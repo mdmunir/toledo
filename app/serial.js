@@ -15,6 +15,9 @@ class Serial extends EventEmitter {
         this._config = {
             path: 'COM1',
             baudRate: 9600,
+            dataBits: 8,
+            stopBits: 1,
+            parity: 'none',
             delimiter: '\n',
             begin: null,
             end: null,
@@ -37,8 +40,8 @@ class Serial extends EventEmitter {
             this.port = undefined;
             this.parser = undefined;
         }
-
-        this.port = new SerialPort({path: this._config.path, baudRate: this._config.baudRate}, false);
+        const {path, baudRate, dataBits, stopBits, parity} = this._config;
+        this.port = new SerialPort({path, baudRate, dataBits, stopBits, parity}, false);
         this.port.on('error', function (err) {
             self.emit('error', err.toString());
         });
@@ -55,7 +58,12 @@ class Serial extends EventEmitter {
 
     config(value) {
         if (value) {
-            let isChange = (value.path != this._config.path || value.baudRate != this._config.baudRate);
+            let isChange = (value.path != this._config.path
+                || value.baudRate != this._config.baudRate
+                || value.dataBits != this._config.dataBits
+                || value.stopBits != this._config.stopBits
+                || value.parity != this._config.parity
+                );
             Object.assign(this._config, value);
             this._config.delimiter = this._config.delimiter ? this._config.delimiter : '\n';
             fs.writeFileSync(FILENAME, JSON.stringify(this._config), 'utf8');
